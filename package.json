@@ -1,0 +1,40 @@
+{
+  "name": "github-dev",
+  "version": "0.0.1",
+  "description": "This module provides methods to clone a GitHub repository, perform development tasks, commit and create a pull request.",
+  "main": "lib/main.js",
+  "scripts": {
+    "test": "mocha --compilers coffee:coffeescript/register",
+    "prepare": "coffee --compile --output lib/ src/",
+    "postinstall": "npm install nodegit --build-from-source"
+  },
+  "author": "Olivier Lemasle <o.lemasle@gmail.com>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "maven": "^4.1.0",
+    "nodegit": "^0.18.3",
+    "pom-parser": "^1.1.1"
+  },
+  "devDependencies": {
+    "coffeescript": "^1.12.6",
+    "mocha": "^3.4.1",
+    "should": "^11.2.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/olivierlemasle/github-dev.git"
+  },
+  "keywords": [
+    "git",
+    "github",
+    "mvn",
+    "maven",
+    "pull-request",
+    "pr",
+    "commit"
+  ],
+  "bugs": {
+    "url": "https://github.com/olivierlemasle/github-dev/issues"
+  },
+  "homepage": "https://github.com/olivierlemasle/github-dev#readme"
+}
