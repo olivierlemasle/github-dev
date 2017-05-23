@@ -38,7 +38,7 @@ getUpdatedRepo = (url, branch, path, fetchOptions) ->
     logRepo(repo)
     repo
 
-getCoreVersion = () ->
+getMvnProjectVersion = (path) ->
   pomPath = path + '/pom.xml'
   console.log "Path: #{pomPath}"
   opts =
@@ -50,4 +50,7 @@ getCoreVersion = () ->
       version = pomResponse.pomObject.project.version
       res(version)
 
-module.exports.getUpdatedRepo = getUpdatedRepo
+module.exports =
+  getUpdatedRepo: getUpdatedRepo
+  getMvnProjectVersion: getMvnProjectVersion
+
