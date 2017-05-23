@@ -1,17 +1,15 @@
 main = require '../src/main.coffee'
 should = require 'should'
+Git = require 'nodegit'
 
 describe 'Git repositories', ->
-  @timeout(15000)
+  @timeout(5000)
 
+  url = 'https://github.com/olivierlemasle/plaintext-maven-plugin'
   fetchOpts =
     callbacks:
       certificateCheck: () -> 1
 
   it 'can be cloned', ->
-    main.getUpdatedRepo('https://github.com/nodegit/nodegit', 'master', './tmp', fetchOpts)
-    .then (repo) ->
-      repo.head()
-    .should.have.eventually.property('name')
-
-
+    main.getUpdatedRepo(url, 'master', './tmp', fetchOpts)
+    .should.eventually.be.instanceOf(Git.Repository)
