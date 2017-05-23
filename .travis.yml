@@ -1,11 +1,14 @@
 language: node_js
 node_js: "7"
 env:
-  - CXX=g++-4.8
+  - CC=gcc-4.9
+  - CXX=g++-4.9
 addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
     packages:
-      - g++-4.8
-
+      - build-essential
+      - libssl-dev
+      - gcc-4.9-multilib
+      - g++-4.9-multilib
