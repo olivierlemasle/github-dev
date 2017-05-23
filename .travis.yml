@@ -1,9 +1,5 @@
 language: node_js
 node_js: "7"
-env:
-  global:
-    - CC=gcc-4.9
-    - CXX=g++-4.9
 addons:
   apt:
     sources:
@@ -11,5 +7,4 @@ addons:
     packages:
       - build-essential
       - libssl-dev
-      - gcc-4.9-multilib
-      - g++-4.9-multilib
+      - libstdc++-4.9-dev
