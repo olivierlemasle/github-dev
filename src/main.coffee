@@ -9,32 +9,42 @@ logRepo = (repo) ->
     [head, commit] = res
     console.log "HEAD=#{head} - #{commit}"
 
-getUpdatedRepo = (url, branch, path, fetchOptions) ->
+checkoutNewBranch = (repo, branch) ->
+  repo.getBranchCommit("refs/remotes/origin/#{branch}")
+  .then (commit) ->
+    repo.createBranch branch, commit, false
+
+checkoutAndPullBranch = (repo, branch) ->
+  repo.checkoutBranch(branch)
+  .then () ->
+    repo.mergeBranches(branch, "origin/#{branch}")
+
+getUpdatedRepo = (url, branch, localPath, fetchOptions) ->
   cloneOptions =
     checkoutBranch: branch
     fetchOpts: fetchOptions
  
-  Git.Clone(url, path, cloneOptions)
-  .catch (e) =>
-    console.log "Cannot clone #{url} to #{path}"
-    console.log(e)
-    console.log 'Fallback: try to open existing git repository'
+  console.log "Cloning #{url} to #{localPath}..."
 
-    Git.Repository.open(path)
-    .then (repo) =>
+  Git.Clone(url, localPath, cloneOptions)
+  .catch (e) ->
+ 
+    console.log "Cannot clone #{url} to #{localPath}: #{e}"
+    console.log 'Trying to open existing git repository...'
+
+    Git.Repository.open(localPath)
+    .then (repo) ->
       repository = repo
-      console.log 'Open git repository'
-      console.log 'Fetch from remotes'
+      console.log 'Fetching from remotes...'
+
       repository.fetchAll(fetchOptions)
-      .then () =>
-        console.log "Checkout branch #{branch}"
-        repository.checkoutBranch(branch)
-      .then () =>
-        console.log "Merge from origin"
-        repository.mergeBranches(branch, "origin/#{branch}")
-      .then () =>
+      .then () ->
+        checkoutNewBranch repository, branch
+      .catch () ->
+        checkoutAndPullBranch repository, branch
+      .then () ->
         repository
-  .then (repo) =>
+  .then (repo) ->
     logRepo(repo)
     repo
 
@@ -45,7 +55,7 @@ getMvnProjectVersion = (path) ->
     filePath: pomPath
   new Promise (res, rej) ->
     pomParser.parse opts, (err, pomResponse) ->
-      if (err)
+      if err
         return rej(err)
       version = pomResponse.pomObject.project.version
       res(version)

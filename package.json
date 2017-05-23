@@ -13,7 +13,8 @@
   "dependencies": {
     "maven": "^4.1.0",
     "nodegit": "^0.18.3",
-    "pom-parser": "^1.1.1"
+    "pom-parser": "^1.1.1",
+    "rmdir": "^1.2.0"
   },
   "devDependencies": {
     "coffeescript": "^1.12.6",
