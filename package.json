@@ -1,6 +1,6 @@
 {
   "name": "github-dev",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "This module provides methods to clone a GitHub repository, perform development tasks, commit and create a pull request.",
   "main": "lib/main.js",
   "scripts": {
