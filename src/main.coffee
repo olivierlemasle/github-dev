@@ -13,6 +13,8 @@ checkoutNewBranch = (repo, branch) ->
   repo.getBranchCommit("refs/remotes/origin/#{branch}")
   .then (commit) ->
     repo.createBranch branch, commit, false
+  .then (ref) ->
+    repo.checkoutBranch(ref)
 
 checkoutAndPullBranch = (repo, branch) ->
   repo.checkoutBranch(branch)
