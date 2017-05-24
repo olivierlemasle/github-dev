@@ -1,3 +1,5 @@
 src
 test/*.coffee
 tmp
+coffeelint.json
+.travis.yml

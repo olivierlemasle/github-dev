@@ -16,19 +16,19 @@ checkoutNewBranch = (repo, branch) ->
 
 checkoutAndPullBranch = (repo, branch) ->
   repo.checkoutBranch(branch)
-  .then () ->
+  .then ->
     repo.mergeBranches(branch, "origin/#{branch}")
 
 getUpdatedRepo = (url, branch, localPath, fetchOptions) ->
   cloneOptions =
     checkoutBranch: branch
     fetchOpts: fetchOptions
- 
+
   console.log "Cloning #{url} to #{localPath}..."
 
   Git.Clone(url, localPath, cloneOptions)
   .catch (e) ->
- 
+
     console.log "Cannot clone #{url} to #{localPath}: #{e}"
     console.log 'Trying to open existing git repository...'
 
@@ -38,11 +38,11 @@ getUpdatedRepo = (url, branch, localPath, fetchOptions) ->
       console.log 'Fetching from remotes...'
 
       repository.fetchAll(fetchOptions)
-      .then () ->
+      .then ->
         checkoutNewBranch repository, branch
-      .catch () ->
+      .catch ->
         checkoutAndPullBranch repository, branch
-      .then () ->
+      .then ->
         repository
   .then (repo) ->
     logRepo(repo)
@@ -63,4 +63,3 @@ getMvnProjectVersion = (path) ->
 module.exports =
   getUpdatedRepo: getUpdatedRepo
   getMvnProjectVersion: getMvnProjectVersion
-

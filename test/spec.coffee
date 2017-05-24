@@ -17,7 +17,7 @@ describe 'Git repositories', ->
   url = 'https://github.com/olivierlemasle/java-certificate-authority'
   fetchOpts =
     callbacks:
-      certificateCheck: () -> 1
+      certificateCheck: -> 1
 
   it 'can be cloned', ->
     main.getUpdatedRepo(url, 'master', path, fetchOpts)
@@ -25,7 +25,7 @@ describe 'Git repositories', ->
 
   it 'can be pulled', ->
     main.getUpdatedRepo(url, 'master', path, fetchOpts)
-    .then () ->
+    .then ->
       main.getUpdatedRepo(url, 'master', path, fetchOpts)
     .should.eventually.be.instanceOf(Git.Repository)
 
@@ -37,7 +37,7 @@ describe 'On a Maven project', ->
   path = './tmp'
   fetchOpts =
     callbacks:
-      certificateCheck: () -> 1
+      certificateCheck: -> 1
 
   it 'version can be retrieved', ->
     main.getUpdatedRepo(url, 'master', path, fetchOpts)

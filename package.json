@@ -6,6 +6,7 @@
   "scripts": {
     "test": "mocha --compilers coffee:coffeescript/register",
     "prepare": "coffee --compile --output lib/ src/",
+    "lint": "coffeelint -f coffeelint.json src/ test/"
   },
   "author": "Olivier Lemasle <o.lemasle@gmail.com>",
   "license": "Apache-2.0",
@@ -16,6 +17,7 @@
     "rmdir": "^1.2.0"
   },
   "devDependencies": {
+    "coffeelint": "^1.16.0",
     "coffeescript": "^1.12.6",
     "mocha": "^3.4.1",
     "should": "^11.2.1"
