@@ -1,17 +1,8 @@
 language: node_js
 node_js: "7"
-env:
-  global:
-    - CC=/usr/bin/gcc-4.9
-    - CXX=/usr/bin/g++-4.9
-    - npm_config_clang=0
 addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
     packages:
-      - build-essential
-      - libssl-dev
       - libstdc++-4.9-dev
-      - gcc-4.9-multilib
-      - g++-4.9-multilib

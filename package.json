@@ -6,7 +6,6 @@
   "scripts": {
     "test": "mocha --compilers coffee:coffeescript/register",
     "prepare": "coffee --compile --output lib/ src/",
-    "postinstall": "npm install nodegit --build-from-source"
   },
   "author": "Olivier Lemasle <o.lemasle@gmail.com>",
   "license": "Apache-2.0",
