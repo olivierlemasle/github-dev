@@ -11,10 +11,10 @@
   "author": "Olivier Lemasle <o.lemasle@gmail.com>",
   "license": "Apache-2.0",
   "dependencies": {
+    "del": "^2.2.2",
     "maven": "^4.1.0",
     "nodegit": "^0.18.3",
-    "pom-parser": "^1.1.1",
-    "rmdir": "^1.2.0"
+    "pom-parser": "^1.1.1"
   },
   "devDependencies": {
     "coffeelint": "^1.16.0",

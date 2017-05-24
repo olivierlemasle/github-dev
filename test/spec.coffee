@@ -1,15 +1,12 @@
 main = require '../src/main.coffee'
 should = require 'should'
 Git = require 'nodegit'
-rmdir = require 'rmdir'
+del = require 'del'
 
 path = './tmp'
 
-beforeEach 'Clean', (done) ->
-  rmdir path, (err, dirs, files) ->
-    if err
-      return done(err)
-    done()
+beforeEach 'Clean', ->
+  del.sync([path])
 
 describe 'Git repositories', ->
   @timeout(15000)
