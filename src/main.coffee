@@ -1,67 +1,80 @@
-Git = require('nodegit')
+git = require('nodegit')
 pomParser = require('pom-parser')
 
-logRepo = (repo) ->
-  headPromise = repo.head().then (ref) -> ref.name()
-  headCommitPromise = repo.getHeadCommit().then (commit) -> commit.sha()
-  Promise.all [headPromise, headCommitPromise]
-  .then (res) ->
-    [head, commit] = res
-    console.log "HEAD=#{head} - #{commit}"
+class GithubDev
+  constructor: (@gitUrl, @baseBranch, @fetchOptions, @localPath,
+                @remote = 'origin') ->
 
-checkoutNewBranch = (repo, branch) ->
-  repo.getBranchCommit("refs/remotes/origin/#{branch}")
-  .then (commit) ->
-    repo.createBranch branch, commit, false
-  .then (ref) ->
-    repo.checkoutBranch(ref)
+  fetch: ->
+    cloneOptions =
+      checkoutBranch: @baseBranch
+      fetchOpts: @fetchOptions
 
-checkoutAndPullBranch = (repo, branch) ->
-  repo.checkoutBranch(branch)
-  .then ->
-    repo.mergeBranches(branch, "origin/#{branch}")
+    console.log "Cloning #{@gitUrl} to #{@localPath}..."
 
-getUpdatedRepo = (url, branch, localPath, fetchOptions) ->
-  cloneOptions =
-    checkoutBranch: branch
-    fetchOpts: fetchOptions
+    git.Clone(@gitUrl, @localPath, cloneOptions)
+    .catch (e) =>
 
-  console.log "Cloning #{url} to #{localPath}..."
+      console.log "Cannot clone #{@gitUrl} to #{@localPath}: #{e}"
+      console.log 'Trying to open existing git repository...'
 
-  Git.Clone(url, localPath, cloneOptions)
-  .catch (e) ->
+      git.Repository.open(@localPath)
+      .then (repo) =>
+        repository = repo
+        console.log 'Fetching from remotes...'
 
-    console.log "Cannot clone #{url} to #{localPath}: #{e}"
-    console.log 'Trying to open existing git repository...'
+        repository.fetchAll(@fetchOptions)
+        .then =>
+          @checkoutNewBranchFromRemote repo
+        .catch =>
+          console.log 'Local branch already existing'
+          @checkoutAndPullBranchFromRemote repo
+        .then ->
+          repository
+    .then (repo) =>
+      @logRepo(repo)
+      repo
 
-    Git.Repository.open(localPath)
-    .then (repo) ->
-      repository = repo
-      console.log 'Fetching from remotes...'
+  getMvnProjectVersion: ->
+    pomPath = @localPath + '/pom.xml'
+    console.log "Path: #{pomPath}"
+    opts =
+      filePath: pomPath
+    new Promise (res, rej) ->
+      pomParser.parse opts, (err, pomResponse) ->
+        if err
+          return rej(err)
+        version = pomResponse.pomObject.project.version
+        res(version)
 
-      repository.fetchAll(fetchOptions)
-      .then ->
-        checkoutNewBranch repository, branch
-      .catch ->
-        checkoutAndPullBranch repository, branch
-      .then ->
-        repository
-  .then (repo) ->
-    logRepo(repo)
-    repo
+  checkoutNewBranchFromRemote: (repo) ->
+    console.log "Creating local branch from #{@remote}/#{@baseBranch}"
+    repo.getBranchCommit("refs/remotes/#{@remote}/#{@baseBranch}")
+    .then (commit) =>
+      repo.createBranch @baseBranch, commit, false
+    .then (ref) =>
+      console.log "Checkout branch #{@baseBranch}"
+      repo.checkoutBranch(ref)
 
-getMvnProjectVersion = (path) ->
-  pomPath = path + '/pom.xml'
-  console.log "Path: #{pomPath}"
-  opts =
-    filePath: pomPath
-  new Promise (res, rej) ->
-    pomParser.parse opts, (err, pomResponse) ->
-      if err
-        return rej(err)
-      version = pomResponse.pomObject.project.version
-      res(version)
+  checkoutAndPullBranchFromRemote: (repo) ->
+    console.log "Checkout branch #{@baseBranch}"
+    repo.checkoutBranch(@baseBranch)
+    .then =>
+      console.log "Pulling from #{@remote}/#{@baseBranch}"
+      repo.mergeBranches(@baseBranch, "#{@remote}/#{@baseBranch}")
+
+  logRepo: (repo) ->
+    headPromise = repo.head().then (ref) -> ref.name()
+    headCommitPromise = repo.getHeadCommit().then (commit) -> commit.sha()
+    Promise.all [headPromise, headCommitPromise]
+    .then (res) ->
+      [head, commit] = res
+      console.log "HEAD=#{head} - #{commit}"
+
+  createAndCheckoutNewBranch: (repo, newBranch) ->
+    repo.getBranchCommit(@baseBranch)
+    .then (commit) ->
+      repo.createBranch newBranch, commit, false
 
 module.exports =
-  getUpdatedRepo: getUpdatedRepo
-  getMvnProjectVersion: getMvnProjectVersion
+  GithubDev: GithubDev

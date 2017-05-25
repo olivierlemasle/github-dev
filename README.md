@@ -1,17 +1,17 @@
 # github-dev
 [![Build Status](https://travis-ci.org/olivierlemasle/github-dev.svg?branch=master)](https://travis-ci.org/olivierlemasle/github-dev)
 [![npm version](https://badge.fury.io/js/github-dev.svg)](https://badge.fury.io/js/github-dev)
+[![dependencies Status](https://david-dm.org/olivierlemasle/github-dev/status.svg)](https://david-dm.org/olivierlemasle/github-dev)
 
-## install
+## Install
 
 ```
 npm install github-dev
 ```
 
-## usage
+## Usage
 
-License
--------
+## License
 
 ```
 Copyright 2017 Olivier Lemasle
