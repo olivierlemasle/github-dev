@@ -1,8 +1,11 @@
-git = require('nodegit')
-pomParser = require('pom-parser')
+git       = require 'nodegit'
+pomParser = require 'pom-parser'
+githubApi = require 'github'
 
 class GithubDev
-  constructor: (@gitUrl, @baseBranch, @fetchOptions, @localPath,
+  constructor: (@gitUrl, @baseBranch, @fetchOptions, @pushOptions, @localPath,
+                @githubAuth, @githubRepoOwner, @githubRepo,
+                @authorName = 'GithubDev', @authorEmail = 'example@example.net',
                 @remote = 'origin') ->
 
   fetch: ->
@@ -47,6 +50,48 @@ class GithubDev
         version = pomResponse.pomObject.project.version
         res(version)
 
+  requestChange: (repo, changeBranch, message, prTitle, prBody, pushChange,
+    change) ->
+    index = oid = null
+    @createAndCheckoutNewBranch(repo, changeBranch)
+    .then ->
+      change()
+    .then ->
+      repo.refreshIndex()
+    .then (idx) ->
+      index = idx
+      index.addAll()
+    .then ->
+      index.write()
+    .then ->
+      index.writeTree()
+    .then (oidResult) ->
+      oid = oidResult
+      git.Reference.nameToId(repo, 'HEAD')
+    .then (head) ->
+      repo.getCommit(head)
+    .then (parent) =>
+      author = git.Signature.now(@authorName, @authorEmail)
+      repo.createCommit('HEAD', author, author, message, oid, [parent])
+    .then =>
+      if (!pushChange)
+        return Promise.resolve(oid.tostrS())
+      repo.getRemote(@remote)
+      .then (remote) =>
+        refSpec = "refs/heads/#{changeBranch}:refs/heads/#{changeBranch}"
+        remote.push [refSpec], @pushOptions
+      .then =>
+        github = new githubApi {Promise: require('bluebird')}
+        github.authenticate(@githubAuth)
+        github.pullRequests.create {
+          owner: @githubRepoOwner,
+          repo: @githubRepo,
+          title: prTitle,
+          head: changeBranch,
+          base: @baseBranch,
+          body: prBody
+        }
+
   checkoutNewBranchFromRemote: (repo) ->
     console.log "Creating local branch from #{@remote}/#{@baseBranch}"
     repo.getBranchCommit("refs/remotes/#{@remote}/#{@baseBranch}")
@@ -75,6 +120,12 @@ class GithubDev
     repo.getBranchCommit(@baseBranch)
     .then (commit) ->
       repo.createBranch newBranch, commit, false
+    .then (ref) ->
+      console.log "Checkout branch #{newBranch}"
+      repo.checkoutBranch(ref)
+    .then ->
+      repo
 
 module.exports =
   GithubDev: GithubDev
+
