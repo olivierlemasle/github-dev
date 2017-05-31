@@ -12,5 +12,6 @@ deploy:
   provider: npm
   on:
     tags: true
+  email: o.lemasle@gmail.com
   api_key:
     secure: "KQ/ZJg4Hkp4WFXd0Nkqe/HCRQTbUaevUAk17DULcPDPN6jT//PyWBch+WtGGjkgwsuXL7/Ttitzw5/RjMwweWL95+fVjVm1GtqtDIy4CXUNNqguEnY+Ax/jitOL5HHAbQmwG73d7M+SAWYh762N8oNj6n0ThOS25+1Zn5yZKRv0hwVf9D0cpae2WMrG+fE4MReXOL09FYcMJS8xizReaNd1585oaEtIrbuIABK+qYU0Eau6iDaGEv4FPqPM0+CMQboX9l0GbXZIT/4HICGr3f+KdXvsNhkX/+F4NhHYq/Tdd+ZOCRhW6A6BE0dIjnoxIuhfpZmuTOpnsGdwVaxiHzz//KLfkWu9Mkn8zuuI4oLyt2MEB7twn3hzfN73wiI6HZvbRfgIGpVJNO69lYL7RMNo2SiueB8+a2gJBm/JHF04cgNa4t0dnV5DHp0K5+6SrfIJofZ5Q2uuqtPLDSR9BKAUgt2sJAGJsaPJV1x66uKpROQzyeLk5jJePYDprPkHeyAiwDcS4Oaaxil9ZnkSkxUNhz6iJ90iSHUt0aXf191RxTMcoIwPV+k9JwJf6WFEj2mye4scHBKChA7QIxA8HG1uqlLFIgj37VTqD9LUmgVo5gm5Trk0q6QwSAr1UHJzNYz7YYnaS4R5GDiFpF8YdDDrjQwBWvhTx/wyb8ADl5QU="
