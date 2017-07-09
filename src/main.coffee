@@ -72,7 +72,8 @@ class GithubDev
       repo.getCommit(head)
     .then (parent) =>
       author = git.Signature.now(@authorName, @authorEmail)
-      repo.createCommit('HEAD', author, author, message, oid, [parent])
+      commiter = git.Signature.now(@authorName, @authorEmail)
+      repo.createCommit('HEAD', author, commiter, message, oid, [parent])
     .then =>
       if (!pushChange)
         return Promise.resolve(oid.tostrS())
@@ -128,4 +129,3 @@ class GithubDev
 
 module.exports =
   GithubDev: GithubDev
-
